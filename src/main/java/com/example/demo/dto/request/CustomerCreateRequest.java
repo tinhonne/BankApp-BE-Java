@@ -27,10 +27,10 @@ public class CustomerCreateRequest {
     private String address;
 
     @NotBlank(message = "CCCD khong bo trong")
-    @Pattern(regexp = "\\d{10}",message = "CCCD phai nhap so")
+    @Pattern(regexp = "\\d{10}",message = "CCCD phai 10 so")
     private String identityNo;
 
-    @Pattern(regexp = "\\d{9,10}", message = "SDT phai la so")
+    @Pattern(regexp = "\\d{9,10}", message = "SDT phai du 9-10 chu so")
     private String mobile;
 
     @NotNull(message = "Kieu Khach hang khong duoc bo trong")

@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.CustomerCreateRequest;
 import com.example.demo.dto.request.CustomerUpdateRequest;
+import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.CustomerResponse;
 import com.example.demo.service.CustomerService;
 import jakarta.validation.Valid;
@@ -18,25 +19,25 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public CustomerResponse createCustomer(@Valid  @RequestBody CustomerCreateRequest request){
-        return customerService.createCustomer(request);
+    public ApiResponse<CustomerResponse> createCustomer(@Valid  @RequestBody CustomerCreateRequest request){
+        return ApiResponse.success(customerService.createCustomer(request));
     }
     @GetMapping
-    public List<CustomerResponse> getCustomer(){
-        return customerService.getCustomer();
+    public ApiResponse<List<CustomerResponse>> getCustomer(){
+        return ApiResponse.success(customerService.getCustomer());
     }
     @GetMapping("/{id}")
-    public CustomerResponse getCustomerById(@PathVariable Long id){
-        return customerService.getCustomerById(id);
+    public ApiResponse<CustomerResponse> getCustomerById(@PathVariable Long id){
+        return ApiResponse.success(customerService.getCustomerById(id));
     }
     @PutMapping("/{id}")
-    public  CustomerResponse updateCustomerById(@PathVariable Long id,@Valid @RequestBody CustomerUpdateRequest request){
-        return customerService.updateCustomerById(id,request);
+    public  ApiResponse<CustomerResponse> updateCustomerById(@PathVariable Long id,@Valid @RequestBody CustomerUpdateRequest request){
+        return ApiResponse.success(customerService.updateCustomerById(id,request));
     }
     @DeleteMapping("/{id}")
-    public String deleteCustomerById(@PathVariable Long id){
+    public ApiResponse<String> deleteCustomerById(@PathVariable Long id){
         customerService.deleteCustomerById(id);
-        return "Xoa khach hang thanh cong";
+        return ApiResponse.success("Xoa khach hang thanh cong");
     }
 
 }
