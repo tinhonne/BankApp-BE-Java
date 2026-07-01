@@ -12,21 +12,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value= AppException.class)
     public ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception){
-        return ResponseEntity.badRequest().body(ApiResponse.error(exception.getErrorCode()));
+        ErrorCode errorCode=exception.getErrorCode();
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(ApiResponse.error(exception.getErrorCode()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handlingValidationExceptions(MethodArgumentNotValidException exception) {
 
         String message = exception.getFieldError().getDefaultMessage();
-        return ResponseEntity.badRequest().body(
-                ApiResponse.error(ErrorCode.INVALID_INPUT,message)
+        return ResponseEntity
+                .status(ErrorCode.INVALID_INPUT.getHttpStatus())
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT,message)
         );
     }
     @ExceptionHandler(value = Exception.class)
     public  ResponseEntity<ApiResponse<?>> handlingException(Exception exception){
-        return ResponseEntity.internalServerError().body(
-                ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR)
+        return ResponseEntity
+                .status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
+                .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR)
         );
     }
 }

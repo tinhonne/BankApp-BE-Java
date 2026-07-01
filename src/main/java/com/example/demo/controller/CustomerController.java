@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.CustomerCreateRequest;
+import com.example.demo.dto.request.CustomerSearchRequest;
 import com.example.demo.dto.request.CustomerUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.CustomerResponse;
+import com.example.demo.dto.response.PageResponse;
 import com.example.demo.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,4 +42,19 @@ public class CustomerController {
         return ApiResponse.success("Xoa khach hang thanh cong");
     }
 
+//    @GetMapping("/sort-by-name")
+//    public ApiResponse<PageResponse<CustomerResponse>> getAllCustomerSortByName(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        return ApiResponse.success(customerService.getAllCustomerSortByName(page, size));
+//    }
+    @GetMapping("/by-field")
+    public  ApiResponse<PageResponse<CustomerResponse>> getCustomerSortByField(
+            @ModelAttribute CustomerSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            ){
+        return ApiResponse.success(customerService.getCustomerSortByField(request,page,size));
+    }
 }

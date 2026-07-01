@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Customer {
+public class Customer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,11 +39,5 @@ public class Customer {
 
     @Column(nullable = false)
     private Integer status;
-
-    @Column(nullable = false,updatable = false)
-    private LocalDateTime createDatetime;
-
-    @Column(nullable = false)
-    private LocalDateTime updateDatetime;
 
 }
