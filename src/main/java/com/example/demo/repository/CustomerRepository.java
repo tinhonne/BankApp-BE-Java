@@ -10,9 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
     boolean existsByIdentityNo(String identityNo);
-
-//    @Query("Select c From Customer c Order by c.name ASC")
-//    Page<Customer> findAllSortedByName(Pageable pageable);
+    @Query("Select c From Customer c Order by c.name ASC")
+    Page<Customer> findAllSortedByName(Pageable pageable);
 
     Page<Customer> findAll(Specification<Customer> spec, Pageable pageable);
 

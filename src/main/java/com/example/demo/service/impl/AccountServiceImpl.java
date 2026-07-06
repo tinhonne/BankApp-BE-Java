@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.AccountRequest;
 import com.example.demo.dto.response.AccountResponse;
+import com.example.demo.dto.response.PageResponse;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import com.example.demo.exception.AppException;
@@ -11,6 +12,9 @@ import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -62,5 +66,21 @@ public class AccountServiceImpl implements AccountService {
         }
         return accountMapping.toResponse(account);
 
+    }
+//Search all account and sort by customer.name
+    @Override
+    public PageResponse<AccountResponse> getAccountSortByNameCustomer(int page,int size){
+        Pageable pageable= PageRequest.of(page,size);
+        Page<Account> accounts=accountRepository.findAllSortedByCustomerName(pageable);
+        return PageResponse.from(accounts.map(accountMapping::toResponse));
+    }
+
+// Search active account by customer.id and sort accountNumber
+
+    @Override
+    public PageResponse<AccountResponse> getActiveAccountByCustomerId(Long id,int page, int size){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Account> accounts=accountRepository.findActiveAccountByCustomerId(id,pageable);
+        return PageResponse.from(accounts.map(accountMapping::toResponse));
     }
 }

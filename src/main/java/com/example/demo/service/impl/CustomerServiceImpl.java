@@ -9,6 +9,7 @@ import com.example.demo.entity.Customer;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.CustomerMapping;
+import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.service.CustomerService;
 import com.example.demo.specification.CustomerSpecification;
@@ -19,14 +20,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
     @Autowired
     private CustomerMapping customerMapping;
 
@@ -43,15 +44,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     // Search all customer
-    @Override
-    public List<CustomerResponse> getCustomer(){
-        List<Customer> customers =customerRepository.findAll();
-        List<CustomerResponse> responses=new ArrayList<>();
-        for(Customer customer: customers){
-            responses.add(customerMapping.toResponse(customer));
-        }
-        return responses;
-    }
+//    @Override
+//    public List<CustomerResponse> getCustomer(){
+//        List<Customer> customers =customerRepository.findAll();
+//        List<CustomerResponse> responses=new ArrayList<>();
+//        for(Customer customer: customers){
+//            responses.add(customerMapping.toResponse(customer));
+//        }
+//        return responses;
+//    }
 
     //Search customer by id
     @Override
@@ -78,16 +79,20 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomerById(Long id){
         Customer customer=customerRepository.findById(id)
                 .orElseThrow(()->new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
-        customerRepository.delete(customer);
+        if(accountRepository.existsByCustomerIdAndStatus(id,1)){
+            throw new AppException(ErrorCode.CUSTOMER_HAS_ACCOUNT);
+        }
+        customer.setStatus(0);
+        customerRepository.save(customer);
     }
 
     //Search customer sort by name use Pageable
-//    @Override
-//    public PageResponse<CustomerResponse> getAllCustomerSortByName(int page, int size){
-//        Pageable pageable= PageRequest.of(page,size);
-//        Page<Customer> customers=customerRepository.findAllSortedByName(pageable);
-//        return PageResponse.from(customers.map(customerMapping::toResponse));
-//    }
+    @Override
+    public PageResponse<CustomerResponse> getAllCustomerSortByName(int page, int size){
+        Pageable pageable= PageRequest.of(page,size);
+        Page<Customer> customers=customerRepository.findAllSortedByName(pageable);
+        return PageResponse.from(customers.map(customerMapping::toResponse));
+    }
 
     //Search customer sort by field use Pageable
     @Override
