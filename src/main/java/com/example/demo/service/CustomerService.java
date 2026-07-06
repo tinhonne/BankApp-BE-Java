@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface CustomerService {
     CustomerResponse createCustomer(CustomerCreateRequest request);
-    List<CustomerResponse> getCustomer();
+//    List<CustomerResponse> getCustomer();
     CustomerResponse getCustomerById(Long id);
     CustomerResponse updateCustomerById(Long id, CustomerUpdateRequest request);
     void deleteCustomerById(Long id);
-//    PageResponse<CustomerResponse> getAllCustomerSortByName(int page, int size);
+    PageResponse<CustomerResponse> getAllCustomerSortByName(int page, int size);
     PageResponse<CustomerResponse> getCustomerSortByField(CustomerSearchRequest request, int page, int size);
 }
