@@ -20,7 +20,8 @@ public enum ErrorCode {
 
     INTERNAL_SERVER_ERROR(9999, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    USER_EXISTED(4001,"tai khoan dang nhap da ton tai",HttpStatus.BAD_REQUEST);
+    USER_EXISTED(4001,"tai khoan dang nhap da ton tai",HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(4002,"tai khoan khong ton tai",HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;
