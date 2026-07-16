@@ -1,0 +1,2283 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.mvn/
+  wrapper/
+    maven-wrapper.properties
+src/
+  main/
+    java/
+      com/
+        example/
+          demo/
+            controller/
+              AccountController.java
+              AuthenticationController.java
+              CustomerController.java
+              UserController.java
+            dto/
+              request/
+                AccountRequest.java
+                AuthenticationRequest.java
+                CustomerCreateRequest.java
+                CustomerSearchRequest.java
+                CustomerUpdateRequest.java
+                IntrospectRequest.java
+                UserCreateRequest.java
+              response/
+                AccountResponse.java
+                ApiResponse.java
+                AuthenticationResponse.java
+                CustomerResponse.java
+                IntrospectResponse.java
+                PageResponse.java
+                UserCreateResponse.java
+            entity/
+              Account.java
+              BaseEntity.java
+              Customer.java
+              CustomerType.java
+              User.java
+            exception/
+              AppException.java
+              ErrorCode.java
+              GlobalExceptionHandler.java
+            mapper/
+              AccountMapping.java
+              CustomerMapping.java
+              UserMapping.java
+            repository/
+              AccountRepository.java
+              CustomerRepository.java
+              UserRepository.java
+            service/
+              impl/
+                AccountServiceImpl.java
+                AuthenticationServiceImpl.java
+                CustomerServiceImpl.java
+                UserServiceImpl.java
+              AccountService.java
+              AuthenticationService.java
+              CustomerService.java
+              UserService.java
+            specification/
+              CustomerSpecification.java
+            DemoApplication.java
+    resources/
+      application.properties
+  test/
+    java/
+      com/
+        example/
+          demo/
+            DemoApplicationTests.java
+.gitattributes
+.gitignore
+mvnw
+mvnw.cmd
+pom.xml
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".mvn/wrapper/maven-wrapper.properties">
+wrapperVersion=3.3.4
+distributionType=only-script
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip
+</file>
+
+<file path="src/main/java/com/example/demo/controller/UserController.java">
+package com.example.demo.controller;
+
+import com.example.demo.dto.request.UserCreateRequest;
+import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.UserResponse;
+import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/users")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<UserCreateResponse>> createUser(@Valid @RequestBody UserCreateRequest request){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success(userService.createUser(request)));
+    }
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/AccountRequest.java">
+package com.example.demo.dto.request;
+
+import com.example.demo.entity.Customer;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AccountRequest {
+
+    @NotBlank
+    @Pattern(regexp = "\\d{13}")
+    private String accountNumber;
+
+    @NotNull
+    private Long customerId;
+
+    @NotNull
+    @PositiveOrZero
+    private Double balance;
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/AuthenticationRequest.java">
+package com.example.demo.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthenticationRequest {
+
+    @NotBlank(message = "Tài khoản không được để trống")
+    @Size(max = 15, message = "Tài khoản không được quá 15 ký tự")
+    private String username;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 8, max = 15, message = "Mật khẩu phải từ 8 đến 15 ký tự")
+    private String password;
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/CustomerSearchRequest.java">
+package com.example.demo.dto.request;
+
+import com.example.demo.entity.CustomerType;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+public class CustomerSearchRequest {
+    private String name;
+    private String identityNo;
+    private String mobile;
+    private CustomerType customerType;
+    private Integer status;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/IntrospectRequest.java">
+package com.example.demo.dto.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class IntrospectRequest {
+    private String token;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/UserCreateRequest.java">
+package com.example.demo.dto.request;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserCreateRequest {
+
+    @NotBlank(message = "Tài khoản không được để trống")
+    @Size(max = 15, message = "Tài khoản không được quá 15 ký tự")
+    private String username;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 8, max = 15, message = "Mật khẩu phải từ 8 đến 15 ký tự")
+    private String password;
+
+    @NotBlank(message = "Tên không được để trống")
+    @Size(max = 20, message = "Tên không được quá 20 ký tự")
+    private String name;
+
+    @NotNull(message = "Vui lòng chọn chức vụ")
+    @Min(value = 0, message = "Role không hợp lệ")
+    @Max(value = 1, message = "Role không hợp lệ")
+    private Integer role;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/AccountResponse.java">
+package com.example.demo.dto.response;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class AccountResponse {
+
+    private Long id;
+    private Long customerId;
+    private String customerName;
+    private String accountNumber;
+    private Double balance;
+    private Integer status;
+
+    private LocalDateTime createDatetime;
+    private LocalDateTime updateDatetime;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/ApiResponse.java">
+package com.example.demo.dto.response;
+
+import com.example.demo.exception.ErrorCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApiResponse <T>{
+
+    private int code;
+    private String message;
+    private T result;
+
+    public static <T> ApiResponse<T> success(T result){
+        return ApiResponse.<T>builder()
+                .code(ErrorCode.SUCCESS.getCode())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(result)
+                .build();
+    }
+    public static ApiResponse<?> error(ErrorCode errorCode){
+        return ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+    }
+    public static ApiResponse<?> error(ErrorCode errorCode, String message){
+        return ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message(message)
+                .build();
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/IntrospectResponse.java">
+package com.example.demo.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class IntrospectResponse {
+    private boolean valid;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/PageResponse.java">
+package com.example.demo.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PageResponse<T>{
+    private List<T> content;
+    private int pageNumber;
+    private int pageSize;
+    private long totalElements;
+    private int totalPages;
+    private boolean last;
+
+    public static <T> PageResponse<T> from(Page<T> page){
+        return PageResponse.<T>builder()
+                .content(page.getContent())
+                .pageNumber(page.getNumber())
+                .pageSize(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .last(page.isLast())
+                .build();
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/UserCreateResponse.java">
+package com.example.demo.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserCreateResponse {
+    private Long id;
+    private String username;
+    private String name;
+    private Integer role;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/entity/Account.java">
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Account extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 13,nullable = false,unique = true)
+    private String accountNumber;
+
+    @ManyToOne
+    @JoinColumn(name="customer_id",nullable = false)
+    private Customer customer;
+
+    @Column(nullable = false)
+    @PositiveOrZero
+    private Double balance;
+
+    @Column(nullable = false)
+    private Integer status;
+
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/entity/BaseEntity.java">
+package com.example.demo.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@MappedSuperclass
+@Getter
+@Setter
+public class BaseEntity {
+
+    @Column(nullable = false,updatable = false)
+    private LocalDateTime createDatetime;
+
+    @Column(nullable = false)
+    private LocalDateTime updateDatetime;
+
+    @PrePersist
+    protected void onCreat(){
+        this.createDatetime=LocalDateTime.now();
+        this.updateDatetime=LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        this.updateDatetime=LocalDateTime.now();
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/entity/CustomerType.java">
+package com.example.demo.entity;
+
+public enum CustomerType {
+    INDIVIDUAL,   // Khách hàng cá nhân
+    CORPORATE
+}
+</file>
+
+<file path="src/main/java/com/example/demo/entity/User.java">
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class User extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @Column(length = 15,nullable = false,unique = true)
+    String username;
+
+    @Column(length = 100,nullable = false)
+    String password;
+
+    @Column(length = 20,nullable = false)
+    String name;
+
+    @Column(nullable = false)
+    Integer role;
+
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/exception/AppException.java">
+package com.example.demo.exception;
+
+public class AppException extends RuntimeException{
+    private ErrorCode errorCode;
+
+    public AppException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/mapper/AccountMapping.java">
+package com.example.demo.mapper;
+
+import com.example.demo.dto.request.AccountRequest;
+import com.example.demo.dto.response.AccountResponse;
+import com.example.demo.entity.Account;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel = "spring")
+public interface AccountMapping  {
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "customer", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    Account toEntity(AccountRequest accountRequest);
+
+    @Mapping(source ="customer.id" , target = "customerId")
+    @Mapping(source = "customer.name", target = "customerName")
+    AccountResponse toResponse(Account account);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/mapper/CustomerMapping.java">
+package com.example.demo.mapper;
+
+import com.example.demo.dto.request.CustomerCreateRequest;
+import com.example.demo.dto.request.CustomerUpdateRequest;
+import com.example.demo.dto.response.CustomerResponse;
+import com.example.demo.entity.Customer;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+
+@Mapper(componentModel = "spring")
+public interface CustomerMapping {
+    Customer toEntity(CustomerCreateRequest request);
+    CustomerResponse toResponse(Customer customer);
+    void toUpdateCustomerByID(@MappingTarget  Customer customer, CustomerUpdateRequest request);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/mapper/UserMapping.java">
+package com.example.demo.mapper;
+
+import com.example.demo.dto.request.UserCreateRequest;
+import com.example.demo.dto.response.UserCreateResponse;
+import com.example.demo.entity.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel="spring")
+public interface UserMapping {
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    User toEntity(UserCreateRequest request);
+
+    UserCreateResponse toResponse(User user);
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/impl/UserServiceImpl.java">
+package com.example.demo.service.impl;
+
+import com.example.demo.dto.request.UserCreateRequest;
+import com.example.demo.dto.response.UserCreateResponse;
+import com.example.demo.entity.User;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
+import com.example.demo.mapper.UserMapping;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+
+    private final UserMapping userMapping;
+
+    @Override
+    public  UserCreateResponse createUser(UserCreateRequest request){
+        if(userRepository.existsByUsername(request.getUsername())){
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        User user=userMapping.toEntity(request);
+        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        return userMapping.toResponse(userRepository.save(user));
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/UserService.java">
+package com.example.demo.service;
+
+import com.example.demo.dto.request.UserCreateRequest;
+import com.example.demo.dto.response.UserCreateResponse;
+
+public interface UserService {
+    UserCreateResponse createUser(UserCreateRequest request);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/specification/CustomerSpecification.java">
+package com.example.demo.specification;
+
+import com.example.demo.dto.request.CustomerSearchRequest;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.CustomerType;
+import org.springframework.data.jpa.domain.Specification;
+
+public class CustomerSpecification {
+
+    private CustomerSpecification(){}
+
+    private static Specification<Customer> like(String field,String value){
+        return(root,query,cb) ->{
+            if(value==null || value.isBlank()){
+                return cb.conjunction();
+            }
+            return cb.like(
+                    cb.lower(root.get(field)),"%"+value.toLowerCase()+"%"
+            );
+        };
+    }
+    public static Specification<Customer> hasName(String name){
+        return like("name",name);
+    }
+    public  static Specification<Customer> hasIdentityNo(String identityNo){
+        return like("identityNo",identityNo);
+    }
+    public static Specification<Customer> hasMobile(String mobile){
+        return like("mobile",mobile);
+    }
+
+    private static Specification<Customer> hasStatus(Integer status){
+        return(root, query, cb) -> {
+            if(status == null){
+                return cb.conjunction();
+            }
+            return cb.equal(root.get("status"),status);
+        };
+    }
+    private static Specification<Customer> hasCustomerType(CustomerType customerType){
+        return(root,query,cb) ->{
+            if(customerType==null){
+                return cb.conjunction();
+            }
+            return cb.equal(root.get("customerType"),customerType);
+        };
+
+    }
+    public static Specification<Customer> filter(CustomerSearchRequest request){
+        return Specification.where(hasName(request.getName()))
+                .and(hasIdentityNo(request.getIdentityNo()))
+                .and(hasMobile(request.getMobile()))
+                .and(hasStatus(request.getStatus()))
+                .and(hasCustomerType(request.getCustomerType()));
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/DemoApplication.java">
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+}
+</file>
+
+<file path="src/test/java/com/example/demo/DemoApplicationTests.java">
+package com.example.demo;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class DemoApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+</file>
+
+<file path=".gitattributes">
+/mvnw text eol=lf
+*.cmd text eol=crlf
+</file>
+
+<file path=".gitignore">
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+</file>
+
+<file path="mvnw">
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
+# Apache Maven Wrapper startup batch script, version 3.3.4
+#
+# Optional ENV vars
+# -----------------
+#   JAVA_HOME - location of a JDK home dir, required when download maven via java source
+#   MVNW_REPOURL - repo url base for downloading maven distribution
+#   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven
+#   MVNW_VERBOSE - true: enable verbose log; debug: trace the mvnw script; others: silence the output
+# ----------------------------------------------------------------------------
+
+set -euf
+[ "${MVNW_VERBOSE-}" != debug ] || set -x
+
+# OS specific support.
+native_path() { printf %s\\n "$1"; }
+case "$(uname)" in
+CYGWIN* | MINGW*)
+  [ -z "${JAVA_HOME-}" ] || JAVA_HOME="$(cygpath --unix "$JAVA_HOME")"
+  native_path() { cygpath --path --windows "$1"; }
+  ;;
+esac
+
+# set JAVACMD and JAVACCMD
+set_java_home() {
+  # For Cygwin and MinGW, ensure paths are in Unix format before anything is touched
+  if [ -n "${JAVA_HOME-}" ]; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ]; then
+      # IBM's JDK on AIX uses strange locations for the executables
+      JAVACMD="$JAVA_HOME/jre/sh/java"
+      JAVACCMD="$JAVA_HOME/jre/sh/javac"
+    else
+      JAVACMD="$JAVA_HOME/bin/java"
+      JAVACCMD="$JAVA_HOME/bin/javac"
+
+      if [ ! -x "$JAVACMD" ] || [ ! -x "$JAVACCMD" ]; then
+        echo "The JAVA_HOME environment variable is not defined correctly, so mvnw cannot run." >&2
+        echo "JAVA_HOME is set to \"$JAVA_HOME\", but \"\$JAVA_HOME/bin/java\" or \"\$JAVA_HOME/bin/javac\" does not exist." >&2
+        return 1
+      fi
+    fi
+  else
+    JAVACMD="$(
+      'set' +e
+      'unset' -f command 2>/dev/null
+      'command' -v java
+    )" || :
+    JAVACCMD="$(
+      'set' +e
+      'unset' -f command 2>/dev/null
+      'command' -v javac
+    )" || :
+
+    if [ ! -x "${JAVACMD-}" ] || [ ! -x "${JAVACCMD-}" ]; then
+      echo "The java/javac command does not exist in PATH nor is JAVA_HOME set, so mvnw cannot run." >&2
+      return 1
+    fi
+  fi
+}
+
+# hash string like Java String::hashCode
+hash_string() {
+  str="${1:-}" h=0
+  while [ -n "$str" ]; do
+    char="${str%"${str#?}"}"
+    h=$(((h * 31 + $(LC_CTYPE=C printf %d "'$char")) % 4294967296))
+    str="${str#?}"
+  done
+  printf %x\\n $h
+}
+
+verbose() { :; }
+[ "${MVNW_VERBOSE-}" != true ] || verbose() { printf %s\\n "${1-}"; }
+
+die() {
+  printf %s\\n "$1" >&2
+  exit 1
+}
+
+trim() {
+  # MWRAPPER-139:
+  #   Trims trailing and leading whitespace, carriage returns, tabs, and linefeeds.
+  #   Needed for removing poorly interpreted newline sequences when running in more
+  #   exotic environments such as mingw bash on Windows.
+  printf "%s" "${1}" | tr -d '[:space:]'
+}
+
+scriptDir="$(dirname "$0")"
+scriptName="$(basename "$0")"
+
+# parse distributionUrl and optional distributionSha256Sum, requires .mvn/wrapper/maven-wrapper.properties
+while IFS="=" read -r key value; do
+  case "${key-}" in
+  distributionUrl) distributionUrl=$(trim "${value-}") ;;
+  distributionSha256Sum) distributionSha256Sum=$(trim "${value-}") ;;
+  esac
+done <"$scriptDir/.mvn/wrapper/maven-wrapper.properties"
+[ -n "${distributionUrl-}" ] || die "cannot read distributionUrl property in $scriptDir/.mvn/wrapper/maven-wrapper.properties"
+
+case "${distributionUrl##*/}" in
+maven-mvnd-*bin.*)
+  MVN_CMD=mvnd.sh _MVNW_REPO_PATTERN=/maven/mvnd/
+  case "${PROCESSOR_ARCHITECTURE-}${PROCESSOR_ARCHITEW6432-}:$(uname -a)" in
+  *AMD64:CYGWIN* | *AMD64:MINGW*) distributionPlatform=windows-amd64 ;;
+  :Darwin*x86_64) distributionPlatform=darwin-amd64 ;;
+  :Darwin*arm64) distributionPlatform=darwin-aarch64 ;;
+  :Linux*x86_64*) distributionPlatform=linux-amd64 ;;
+  *)
+    echo "Cannot detect native platform for mvnd on $(uname)-$(uname -m), use pure java version" >&2
+    distributionPlatform=linux-amd64
+    ;;
+  esac
+  distributionUrl="${distributionUrl%-bin.*}-$distributionPlatform.zip"
+  ;;
+maven-mvnd-*) MVN_CMD=mvnd.sh _MVNW_REPO_PATTERN=/maven/mvnd/ ;;
+*) MVN_CMD="mvn${scriptName#mvnw}" _MVNW_REPO_PATTERN=/org/apache/maven/ ;;
+esac
+
+# apply MVNW_REPOURL and calculate MAVEN_HOME
+# maven home pattern: ~/.m2/wrapper/dists/{apache-maven-<version>,maven-mvnd-<version>-<platform>}/<hash>
+[ -z "${MVNW_REPOURL-}" ] || distributionUrl="$MVNW_REPOURL$_MVNW_REPO_PATTERN${distributionUrl#*"$_MVNW_REPO_PATTERN"}"
+distributionUrlName="${distributionUrl##*/}"
+distributionUrlNameMain="${distributionUrlName%.*}"
+distributionUrlNameMain="${distributionUrlNameMain%-bin}"
+MAVEN_USER_HOME="${MAVEN_USER_HOME:-${HOME}/.m2}"
+MAVEN_HOME="${MAVEN_USER_HOME}/wrapper/dists/${distributionUrlNameMain-}/$(hash_string "$distributionUrl")"
+
+exec_maven() {
+  unset MVNW_VERBOSE MVNW_USERNAME MVNW_PASSWORD MVNW_REPOURL || :
+  exec "$MAVEN_HOME/bin/$MVN_CMD" "$@" || die "cannot exec $MAVEN_HOME/bin/$MVN_CMD"
+}
+
+if [ -d "$MAVEN_HOME" ]; then
+  verbose "found existing MAVEN_HOME at $MAVEN_HOME"
+  exec_maven "$@"
+fi
+
+case "${distributionUrl-}" in
+*?-bin.zip | *?maven-mvnd-?*-?*.zip) ;;
+*) die "distributionUrl is not valid, must match *-bin.zip or maven-mvnd-*.zip, but found '${distributionUrl-}'" ;;
+esac
+
+# prepare tmp dir
+if TMP_DOWNLOAD_DIR="$(mktemp -d)" && [ -d "$TMP_DOWNLOAD_DIR" ]; then
+  clean() { rm -rf -- "$TMP_DOWNLOAD_DIR"; }
+  trap clean HUP INT TERM EXIT
+else
+  die "cannot create temp dir"
+fi
+
+mkdir -p -- "${MAVEN_HOME%/*}"
+
+# Download and Install Apache Maven
+verbose "Couldn't find MAVEN_HOME, downloading and installing it ..."
+verbose "Downloading from: $distributionUrl"
+verbose "Downloading to: $TMP_DOWNLOAD_DIR/$distributionUrlName"
+
+# select .zip or .tar.gz
+if ! command -v unzip >/dev/null; then
+  distributionUrl="${distributionUrl%.zip}.tar.gz"
+  distributionUrlName="${distributionUrl##*/}"
+fi
+
+# verbose opt
+__MVNW_QUIET_WGET=--quiet __MVNW_QUIET_CURL=--silent __MVNW_QUIET_UNZIP=-q __MVNW_QUIET_TAR=''
+[ "${MVNW_VERBOSE-}" != true ] || __MVNW_QUIET_WGET='' __MVNW_QUIET_CURL='' __MVNW_QUIET_UNZIP='' __MVNW_QUIET_TAR=v
+
+# normalize http auth
+case "${MVNW_PASSWORD:+has-password}" in
+'') MVNW_USERNAME='' MVNW_PASSWORD='' ;;
+has-password) [ -n "${MVNW_USERNAME-}" ] || MVNW_USERNAME='' MVNW_PASSWORD='' ;;
+esac
+
+if [ -z "${MVNW_USERNAME-}" ] && command -v wget >/dev/null; then
+  verbose "Found wget ... using wget"
+  wget ${__MVNW_QUIET_WGET:+"$__MVNW_QUIET_WGET"} "$distributionUrl" -O "$TMP_DOWNLOAD_DIR/$distributionUrlName" || die "wget: Failed to fetch $distributionUrl"
+elif [ -z "${MVNW_USERNAME-}" ] && command -v curl >/dev/null; then
+  verbose "Found curl ... using curl"
+  curl ${__MVNW_QUIET_CURL:+"$__MVNW_QUIET_CURL"} -f -L -o "$TMP_DOWNLOAD_DIR/$distributionUrlName" "$distributionUrl" || die "curl: Failed to fetch $distributionUrl"
+elif set_java_home; then
+  verbose "Falling back to use Java to download"
+  javaSource="$TMP_DOWNLOAD_DIR/Downloader.java"
+  targetZip="$TMP_DOWNLOAD_DIR/$distributionUrlName"
+  cat >"$javaSource" <<-END
+	public class Downloader extends java.net.Authenticator
+	{
+	  protected java.net.PasswordAuthentication getPasswordAuthentication()
+	  {
+	    return new java.net.PasswordAuthentication( System.getenv( "MVNW_USERNAME" ), System.getenv( "MVNW_PASSWORD" ).toCharArray() );
+	  }
+	  public static void main( String[] args ) throws Exception
+	  {
+	    setDefault( new Downloader() );
+	    java.nio.file.Files.copy( java.net.URI.create( args[0] ).toURL().openStream(), java.nio.file.Paths.get( args[1] ).toAbsolutePath().normalize() );
+	  }
+	}
+	END
+  # For Cygwin/MinGW, switch paths to Windows format before running javac and java
+  verbose " - Compiling Downloader.java ..."
+  "$(native_path "$JAVACCMD")" "$(native_path "$javaSource")" || die "Failed to compile Downloader.java"
+  verbose " - Running Downloader.java ..."
+  "$(native_path "$JAVACMD")" -cp "$(native_path "$TMP_DOWNLOAD_DIR")" Downloader "$distributionUrl" "$(native_path "$targetZip")"
+fi
+
+# If specified, validate the SHA-256 sum of the Maven distribution zip file
+if [ -n "${distributionSha256Sum-}" ]; then
+  distributionSha256Result=false
+  if [ "$MVN_CMD" = mvnd.sh ]; then
+    echo "Checksum validation is not supported for maven-mvnd." >&2
+    echo "Please disable validation by removing 'distributionSha256Sum' from your maven-wrapper.properties." >&2
+    exit 1
+  elif command -v sha256sum >/dev/null; then
+    if echo "$distributionSha256Sum  $TMP_DOWNLOAD_DIR/$distributionUrlName" | sha256sum -c - >/dev/null 2>&1; then
+      distributionSha256Result=true
+    fi
+  elif command -v shasum >/dev/null; then
+    if echo "$distributionSha256Sum  $TMP_DOWNLOAD_DIR/$distributionUrlName" | shasum -a 256 -c >/dev/null 2>&1; then
+      distributionSha256Result=true
+    fi
+  else
+    echo "Checksum validation was requested but neither 'sha256sum' or 'shasum' are available." >&2
+    echo "Please install either command, or disable validation by removing 'distributionSha256Sum' from your maven-wrapper.properties." >&2
+    exit 1
+  fi
+  if [ $distributionSha256Result = false ]; then
+    echo "Error: Failed to validate Maven distribution SHA-256, your Maven distribution might be compromised." >&2
+    echo "If you updated your Maven version, you need to update the specified distributionSha256Sum property." >&2
+    exit 1
+  fi
+fi
+
+# unzip and move
+if command -v unzip >/dev/null; then
+  unzip ${__MVNW_QUIET_UNZIP:+"$__MVNW_QUIET_UNZIP"} "$TMP_DOWNLOAD_DIR/$distributionUrlName" -d "$TMP_DOWNLOAD_DIR" || die "failed to unzip"
+else
+  tar xzf${__MVNW_QUIET_TAR:+"$__MVNW_QUIET_TAR"} "$TMP_DOWNLOAD_DIR/$distributionUrlName" -C "$TMP_DOWNLOAD_DIR" || die "failed to untar"
+fi
+
+# Find the actual extracted directory name (handles snapshots where filename != directory name)
+actualDistributionDir=""
+
+# First try the expected directory name (for regular distributions)
+if [ -d "$TMP_DOWNLOAD_DIR/$distributionUrlNameMain" ]; then
+  if [ -f "$TMP_DOWNLOAD_DIR/$distributionUrlNameMain/bin/$MVN_CMD" ]; then
+    actualDistributionDir="$distributionUrlNameMain"
+  fi
+fi
+
+# If not found, search for any directory with the Maven executable (for snapshots)
+if [ -z "$actualDistributionDir" ]; then
+  # enable globbing to iterate over items
+  set +f
+  for dir in "$TMP_DOWNLOAD_DIR"/*; do
+    if [ -d "$dir" ]; then
+      if [ -f "$dir/bin/$MVN_CMD" ]; then
+        actualDistributionDir="$(basename "$dir")"
+        break
+      fi
+    fi
+  done
+  set -f
+fi
+
+if [ -z "$actualDistributionDir" ]; then
+  verbose "Contents of $TMP_DOWNLOAD_DIR:"
+  verbose "$(ls -la "$TMP_DOWNLOAD_DIR")"
+  die "Could not find Maven distribution directory in extracted archive"
+fi
+
+verbose "Found extracted Maven distribution directory: $actualDistributionDir"
+printf %s\\n "$distributionUrl" >"$TMP_DOWNLOAD_DIR/$actualDistributionDir/mvnw.url"
+mv -- "$TMP_DOWNLOAD_DIR/$actualDistributionDir" "$MAVEN_HOME" || [ -d "$MAVEN_HOME" ] || die "fail to move MAVEN_HOME"
+
+clean || :
+exec_maven "$@"
+</file>
+
+<file path="mvnw.cmd">
+<# : batch portion
+@REM ----------------------------------------------------------------------------
+@REM Licensed to the Apache Software Foundation (ASF) under one
+@REM or more contributor license agreements.  See the NOTICE file
+@REM distributed with this work for additional information
+@REM regarding copyright ownership.  The ASF licenses this file
+@REM to you under the Apache License, Version 2.0 (the
+@REM "License"); you may not use this file except in compliance
+@REM with the License.  You may obtain a copy of the License at
+@REM
+@REM    http://www.apache.org/licenses/LICENSE-2.0
+@REM
+@REM Unless required by applicable law or agreed to in writing,
+@REM software distributed under the License is distributed on an
+@REM "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+@REM KIND, either express or implied.  See the License for the
+@REM specific language governing permissions and limitations
+@REM under the License.
+@REM ----------------------------------------------------------------------------
+
+@REM ----------------------------------------------------------------------------
+@REM Apache Maven Wrapper startup batch script, version 3.3.4
+@REM
+@REM Optional ENV vars
+@REM   MVNW_REPOURL - repo url base for downloading maven distribution
+@REM   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven
+@REM   MVNW_VERBOSE - true: enable verbose log; others: silence the output
+@REM ----------------------------------------------------------------------------
+
+@IF "%__MVNW_ARG0_NAME__%"=="" (SET __MVNW_ARG0_NAME__=%~nx0)
+@SET __MVNW_CMD__=
+@SET __MVNW_ERROR__=
+@SET __MVNW_PSMODULEP_SAVE=%PSModulePath%
+@SET PSModulePath=
+@FOR /F "usebackq tokens=1* delims==" %%A IN (`powershell -noprofile "& {$scriptDir='%~dp0'; $script='%__MVNW_ARG0_NAME__%'; icm -ScriptBlock ([Scriptblock]::Create((Get-Content -Raw '%~f0'))) -NoNewScope}"`) DO @(
+  IF "%%A"=="MVN_CMD" (set __MVNW_CMD__=%%B) ELSE IF "%%B"=="" (echo %%A) ELSE (echo %%A=%%B)
+)
+@SET PSModulePath=%__MVNW_PSMODULEP_SAVE%
+@SET __MVNW_PSMODULEP_SAVE=
+@SET __MVNW_ARG0_NAME__=
+@SET MVNW_USERNAME=
+@SET MVNW_PASSWORD=
+@IF NOT "%__MVNW_CMD__%"=="" ("%__MVNW_CMD__%" %*)
+@echo Cannot start maven from wrapper >&2 && exit /b 1
+@GOTO :EOF
+: end batch / begin powershell #>
+
+$ErrorActionPreference = "Stop"
+if ($env:MVNW_VERBOSE -eq "true") {
+  $VerbosePreference = "Continue"
+}
+
+# calculate distributionUrl, requires .mvn/wrapper/maven-wrapper.properties
+$distributionUrl = (Get-Content -Raw "$scriptDir/.mvn/wrapper/maven-wrapper.properties" | ConvertFrom-StringData).distributionUrl
+if (!$distributionUrl) {
+  Write-Error "cannot read distributionUrl property in $scriptDir/.mvn/wrapper/maven-wrapper.properties"
+}
+
+switch -wildcard -casesensitive ( $($distributionUrl -replace '^.*/','') ) {
+  "maven-mvnd-*" {
+    $USE_MVND = $true
+    $distributionUrl = $distributionUrl -replace '-bin\.[^.]*$',"-windows-amd64.zip"
+    $MVN_CMD = "mvnd.cmd"
+    break
+  }
+  default {
+    $USE_MVND = $false
+    $MVN_CMD = $script -replace '^mvnw','mvn'
+    break
+  }
+}
+
+# apply MVNW_REPOURL and calculate MAVEN_HOME
+# maven home pattern: ~/.m2/wrapper/dists/{apache-maven-<version>,maven-mvnd-<version>-<platform>}/<hash>
+if ($env:MVNW_REPOURL) {
+  $MVNW_REPO_PATTERN = if ($USE_MVND -eq $False) { "/org/apache/maven/" } else { "/maven/mvnd/" }
+  $distributionUrl = "$env:MVNW_REPOURL$MVNW_REPO_PATTERN$($distributionUrl -replace "^.*$MVNW_REPO_PATTERN",'')"
+}
+$distributionUrlName = $distributionUrl -replace '^.*/',''
+$distributionUrlNameMain = $distributionUrlName -replace '\.[^.]*$','' -replace '-bin$',''
+
+$MAVEN_M2_PATH = "$HOME/.m2"
+if ($env:MAVEN_USER_HOME) {
+  $MAVEN_M2_PATH = "$env:MAVEN_USER_HOME"
+}
+
+if (-not (Test-Path -Path $MAVEN_M2_PATH)) {
+    New-Item -Path $MAVEN_M2_PATH -ItemType Directory | Out-Null
+}
+
+$MAVEN_WRAPPER_DISTS = $null
+if ((Get-Item $MAVEN_M2_PATH).Target[0] -eq $null) {
+  $MAVEN_WRAPPER_DISTS = "$MAVEN_M2_PATH/wrapper/dists"
+} else {
+  $MAVEN_WRAPPER_DISTS = (Get-Item $MAVEN_M2_PATH).Target[0] + "/wrapper/dists"
+}
+
+$MAVEN_HOME_PARENT = "$MAVEN_WRAPPER_DISTS/$distributionUrlNameMain"
+$MAVEN_HOME_NAME = ([System.Security.Cryptography.SHA256]::Create().ComputeHash([byte[]][char[]]$distributionUrl) | ForEach-Object {$_.ToString("x2")}) -join ''
+$MAVEN_HOME = "$MAVEN_HOME_PARENT/$MAVEN_HOME_NAME"
+
+if (Test-Path -Path "$MAVEN_HOME" -PathType Container) {
+  Write-Verbose "found existing MAVEN_HOME at $MAVEN_HOME"
+  Write-Output "MVN_CMD=$MAVEN_HOME/bin/$MVN_CMD"
+  exit $?
+}
+
+if (! $distributionUrlNameMain -or ($distributionUrlName -eq $distributionUrlNameMain)) {
+  Write-Error "distributionUrl is not valid, must end with *-bin.zip, but found $distributionUrl"
+}
+
+# prepare tmp dir
+$TMP_DOWNLOAD_DIR_HOLDER = New-TemporaryFile
+$TMP_DOWNLOAD_DIR = New-Item -Itemtype Directory -Path "$TMP_DOWNLOAD_DIR_HOLDER.dir"
+$TMP_DOWNLOAD_DIR_HOLDER.Delete() | Out-Null
+trap {
+  if ($TMP_DOWNLOAD_DIR.Exists) {
+    try { Remove-Item $TMP_DOWNLOAD_DIR -Recurse -Force | Out-Null }
+    catch { Write-Warning "Cannot remove $TMP_DOWNLOAD_DIR" }
+  }
+}
+
+New-Item -Itemtype Directory -Path "$MAVEN_HOME_PARENT" -Force | Out-Null
+
+# Download and Install Apache Maven
+Write-Verbose "Couldn't find MAVEN_HOME, downloading and installing it ..."
+Write-Verbose "Downloading from: $distributionUrl"
+Write-Verbose "Downloading to: $TMP_DOWNLOAD_DIR/$distributionUrlName"
+
+$webclient = New-Object System.Net.WebClient
+if ($env:MVNW_USERNAME -and $env:MVNW_PASSWORD) {
+  $webclient.Credentials = New-Object System.Net.NetworkCredential($env:MVNW_USERNAME, $env:MVNW_PASSWORD)
+}
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$webclient.DownloadFile($distributionUrl, "$TMP_DOWNLOAD_DIR/$distributionUrlName") | Out-Null
+
+# If specified, validate the SHA-256 sum of the Maven distribution zip file
+$distributionSha256Sum = (Get-Content -Raw "$scriptDir/.mvn/wrapper/maven-wrapper.properties" | ConvertFrom-StringData).distributionSha256Sum
+if ($distributionSha256Sum) {
+  if ($USE_MVND) {
+    Write-Error "Checksum validation is not supported for maven-mvnd. `nPlease disable validation by removing 'distributionSha256Sum' from your maven-wrapper.properties."
+  }
+  Import-Module $PSHOME\Modules\Microsoft.PowerShell.Utility -Function Get-FileHash
+  if ((Get-FileHash "$TMP_DOWNLOAD_DIR/$distributionUrlName" -Algorithm SHA256).Hash.ToLower() -ne $distributionSha256Sum) {
+    Write-Error "Error: Failed to validate Maven distribution SHA-256, your Maven distribution might be compromised. If you updated your Maven version, you need to update the specified distributionSha256Sum property."
+  }
+}
+
+# unzip and move
+Expand-Archive "$TMP_DOWNLOAD_DIR/$distributionUrlName" -DestinationPath "$TMP_DOWNLOAD_DIR" | Out-Null
+
+# Find the actual extracted directory name (handles snapshots where filename != directory name)
+$actualDistributionDir = ""
+
+# First try the expected directory name (for regular distributions)
+$expectedPath = Join-Path "$TMP_DOWNLOAD_DIR" "$distributionUrlNameMain"
+$expectedMvnPath = Join-Path "$expectedPath" "bin/$MVN_CMD"
+if ((Test-Path -Path $expectedPath -PathType Container) -and (Test-Path -Path $expectedMvnPath -PathType Leaf)) {
+  $actualDistributionDir = $distributionUrlNameMain
+}
+
+# If not found, search for any directory with the Maven executable (for snapshots)
+if (!$actualDistributionDir) {
+  Get-ChildItem -Path "$TMP_DOWNLOAD_DIR" -Directory | ForEach-Object {
+    $testPath = Join-Path $_.FullName "bin/$MVN_CMD"
+    if (Test-Path -Path $testPath -PathType Leaf) {
+      $actualDistributionDir = $_.Name
+    }
+  }
+}
+
+if (!$actualDistributionDir) {
+  Write-Error "Could not find Maven distribution directory in extracted archive"
+}
+
+Write-Verbose "Found extracted Maven distribution directory: $actualDistributionDir"
+Rename-Item -Path "$TMP_DOWNLOAD_DIR/$actualDistributionDir" -NewName $MAVEN_HOME_NAME | Out-Null
+try {
+  Move-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination $MAVEN_HOME_PARENT | Out-Null
+} catch {
+  if (! (Test-Path -Path "$MAVEN_HOME" -PathType Container)) {
+    Write-Error "fail to move MAVEN_HOME"
+  }
+} finally {
+  try { Remove-Item $TMP_DOWNLOAD_DIR -Recurse -Force | Out-Null }
+  catch { Write-Warning "Cannot remove $TMP_DOWNLOAD_DIR" }
+}
+
+Write-Output "MVN_CMD=$MAVEN_HOME/bin/$MVN_CMD"
+</file>
+
+<file path="src/main/java/com/example/demo/controller/AccountController.java">
+package com.example.demo.controller;
+
+
+import com.example.demo.dto.request.AccountRequest;
+import com.example.demo.dto.response.AccountResponse;
+import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.PageResponse;
+import com.example.demo.service.AccountService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/accounts")
+public class AccountController {
+
+    @Autowired
+    private AccountService accountService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<AccountResponse>> createAccount(@Valid @RequestBody AccountRequest accountRequest){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                        .body(ApiResponse.success(accountService.createAccount(accountRequest)));
+    }
+    @GetMapping("/{id}")
+    public ApiResponse<AccountResponse> getAccountById(@PathVariable Long id){
+        return ApiResponse.success(accountService.getAccountById(id));
+    }
+    @GetMapping("/by-number/{accountNumber}")
+    public ApiResponse<AccountResponse> getAccountByAccountNumber(@PathVariable String accountNumber){
+        return ApiResponse.success(accountService.getAccountByAccountNumber(accountNumber));
+
+    }
+    @GetMapping
+    public ApiResponse<PageResponse<AccountResponse>> getAccountSortByNameCustomer(
+            @RequestParam(defaultValue = "0")int page,
+            @RequestParam(defaultValue = "10")int size
+    ){
+        return ApiResponse.success(accountService.getAccountSortByNameCustomer(page,size));
+    }
+
+    @GetMapping("/{id}/active")
+    public  ApiResponse<PageResponse<AccountResponse>> getActiveAccountByCustomerId(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int size
+    ){
+      return ApiResponse.success(accountService.getActiveAccountByCustomerId(id,page,size));
+    };
+}
+</file>
+
+<file path="src/main/java/com/example/demo/controller/AuthenticationController.java">
+package com.example.demo.controller;
+
+import com.example.demo.dto.request.AuthenticationRequest;
+import com.example.demo.dto.request.IntrospectRequest;
+import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.AuthenticationResponse;
+import com.example.demo.dto.response.IntrospectResponse;
+import com.example.demo.service.AuthenticationService;
+import com.nimbusds.jose.JOSEException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/auth")
+public class AuthenticationController {
+
+    private final AuthenticationService authenticationService;
+
+    @PostMapping("/token")
+    ApiResponse<AuthenticationResponse> authentication(@RequestBody AuthenticationRequest request){
+        return ApiResponse.success(authenticationService.authentication(request));
+    }
+    @PostMapping("/introspect")
+    ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request)
+            throws ParseException, JOSEException {
+        return ApiResponse.success(authenticationService.introspect(request));
+    }
+
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/CustomerUpdateRequest.java">
+package com.example.demo.dto.request;
+
+import com.example.demo.entity.CustomerType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CustomerUpdateRequest {
+
+    @NotBlank(message = "Ten khong de trong")
+    @Size(max=100,message = "Ten khong duoc qua dai")
+    private String name;
+
+    @NotNull
+    private LocalDate birthday;
+
+    @NotBlank(message = "Dia chi khong duoc trong")
+    private String address;
+
+    @Pattern(regexp = "\\d{9,10}", message = "SDT phai la so")
+    private String mobile;
+
+    @NotNull(message = "Kieu Khach hang khong duoc bo trong")
+    private CustomerType customerType;
+
+    @NotNull(message = "Trang thai khach hang khong duoc bo trong")
+    private Integer status;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/AuthenticationResponse.java">
+package com.example.demo.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AuthenticationResponse {
+    private String token;
+    private boolean authenticated;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/response/CustomerResponse.java">
+package com.example.demo.dto.response;
+
+import com.example.demo.entity.CustomerType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CustomerResponse {
+    private Long id;
+    private String name;
+    private LocalDate birthday;
+    private String address;
+    private String identityNo;
+    private String mobile;
+    private CustomerType customerType;
+    private Integer status;
+    private LocalDateTime createDatetime;
+    private LocalDateTime updateDatetime;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/repository/AccountRepository.java">
+package com.example.demo.repository;
+
+import com.example.demo.entity.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface AccountRepository extends JpaRepository<Account,Long> {
+    boolean existsByAccountNumber(String accountNumber);
+    Account findByAccountNumber(String accountNumber);
+    boolean existsByCustomerIdAndStatus(Long id, Integer status);
+    @Query("select a from Account a join a.customer c order by c.name ASC ")
+    Page<Account> findAllSortedByCustomerName(Pageable pageable);
+
+    @Query("""
+    Select a From Account a
+            Where a.customer.id=?1
+            And a.status=1
+            Order by a.accountNumber ASC
+""")
+    Page<Account> findActiveAccountByCustomerId(Long id, Pageable pageable);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/repository/UserRepository.java">
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User,Long> {
+
+    boolean existsByUsername(String username);
+    Optional<User> findByUsername(String username);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/impl/AccountServiceImpl.java">
+package com.example.demo.service.impl;
+
+import com.example.demo.dto.request.AccountRequest;
+import com.example.demo.dto.response.AccountResponse;
+import com.example.demo.dto.response.PageResponse;
+import com.example.demo.entity.Account;
+import com.example.demo.entity.Customer;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
+import com.example.demo.mapper.AccountMapping;
+import com.example.demo.repository.AccountRepository;
+import com.example.demo.repository.CustomerRepository;
+import com.example.demo.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
+@Service
+public class AccountServiceImpl implements AccountService {
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private AccountMapping accountMapping;
+
+// create new account by customerId
+
+    @Override
+    public AccountResponse createAccount(AccountRequest accountRequest) {
+        Customer customer=customerRepository.findById(accountRequest.getCustomerId())
+                .orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
+
+        if(accountRepository.existsByAccountNumber(accountRequest.getAccountNumber())){
+            throw new AppException(ErrorCode.ACCOUNT_NUMBER_EXISTED);
+        }
+        Account account=accountMapping.toEntity(accountRequest);
+        account.setCustomer(customer);
+        account.setStatus(3);
+        account.setBalance(account.getBalance() !=null ? account.getBalance():0.0);
+        accountRepository.save(account);
+        return accountMapping.toResponse(account);
+    }
+
+//Seach account by id
+    @Override
+    public AccountResponse getAccountById(Long id){
+        Account account=accountRepository.findById(id)
+                .orElseThrow(()-> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        return accountMapping.toResponse(account);
+
+    }
+// Seach account by accountnumber
+    @Override
+    public AccountResponse getAccountByAccountNumber(String accountNumber){
+        Account account=accountRepository.findByAccountNumber(accountNumber);
+        if(account==null){
+            throw new AppException(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+        return accountMapping.toResponse(account);
+
+    }
+//Search all account and sort by customer.name
+    @Override
+    public PageResponse<AccountResponse> getAccountSortByNameCustomer(int page,int size){
+        Pageable pageable= PageRequest.of(page,size);
+        Page<Account> accounts=accountRepository.findAllSortedByCustomerName(pageable);
+        return PageResponse.from(accounts.map(accountMapping::toResponse));
+    }
+
+// Search active account by customer.id and sort accountNumber
+
+    @Override
+    public PageResponse<AccountResponse> getActiveAccountByCustomerId(Long id,int page, int size){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Account> accounts=accountRepository.findActiveAccountByCustomerId(id,pageable);
+        return PageResponse.from(accounts.map(accountMapping::toResponse));
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/impl/AuthenticationServiceImpl.java">
+package com.example.demo.service.impl;
+
+import com.example.demo.dto.request.AuthenticationRequest;
+import com.example.demo.dto.request.IntrospectRequest;
+import com.example.demo.dto.response.AuthenticationResponse;
+import com.example.demo.dto.response.IntrospectResponse;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.AuthenticationService;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class AuthenticationServiceImpl implements AuthenticationService {
+
+    private final UserRepository userRepository;
+
+    @NonFinal
+    protected static final String SIGNER_KEY ="ffb8c01517a9aeefe2224e8f51fc0ac9edafb00cada04f4ca8afc784e3d49f84";
+
+    @Override
+    public AuthenticationResponse authentication(AuthenticationRequest request){
+        var user=userRepository.findByUsername(request.getUsername())
+                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
+        PasswordEncoder passwordEncoder= new BCryptPasswordEncoder(10);
+        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
+
+        if(!authenticated){
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        var token=genarateToken(request.getUsername());
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
+
+    }
+    public String genarateToken(String username){
+
+        JWSHeader jwsHeader=new JWSHeader(JWSAlgorithm.HS512);
+
+        JWTClaimsSet jwtClaimsSet= new JWTClaimsSet.Builder()
+                .subject(username)
+                .issuer("test.vn")
+                .issueTime(new Date())
+                .expirationTime(new Date(
+                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                ))
+                .build();
+
+        Payload payload=new Payload(jwtClaimsSet.toJSONObject());
+
+        JWSObject jwsObject=new JWSObject(jwsHeader,payload);
+
+        try {
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error("Cannot create Token",e);
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public IntrospectResponse introspect(IntrospectRequest request)
+            throws JOSEException, ParseException {
+        var token=request.getToken();
+
+        JWSVerifier verifier=new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT=SignedJWT.parse(token);
+        Date expiryTime=signedJWT.getJWTClaimsSet().getExpirationTime();
+        var verified=signedJWT.verify(verifier);
+        return IntrospectResponse.builder()
+                .valid(verified && expiryTime.after(new Date()))
+                .build();
+
+    }
+
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/AccountService.java">
+package com.example.demo.service;
+
+import com.example.demo.dto.request.AccountRequest;
+import com.example.demo.dto.response.AccountResponse;
+import com.example.demo.dto.response.PageResponse;
+
+
+public interface AccountService {
+    AccountResponse createAccount(AccountRequest accountRequest);
+    AccountResponse getAccountById(Long id);
+    AccountResponse getAccountByAccountNumber(String accountNumber);
+    PageResponse<AccountResponse> getAccountSortByNameCustomer(int page, int size);
+    PageResponse<AccountResponse> getActiveAccountByCustomerId(Long id, int page, int size);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/AuthenticationService.java">
+package com.example.demo.service;
+
+import com.example.demo.dto.request.AuthenticationRequest;
+import com.example.demo.dto.request.IntrospectRequest;
+import com.example.demo.dto.response.AuthenticationResponse;
+import com.example.demo.dto.response.IntrospectResponse;
+import com.nimbusds.jose.JOSEException;
+
+import java.text.ParseException;
+
+
+public interface AuthenticationService {
+
+    AuthenticationResponse authentication(AuthenticationRequest request);
+    IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
+}
+</file>
+
+<file path="src/main/resources/application.properties">
+spring.application.name=demo
+
+# ======================
+# MYSQL (DOCKER)
+# ======================
+spring.datasource.url=jdbc:mysql://localhost:3306/Bank_app
+spring.datasource.username=root
+spring.datasource.password=root
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# ======================
+# JPA / HIBERNATE
+# ======================
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+</file>
+
+<file path="src/main/java/com/example/demo/entity/Customer.java">
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Cleanup;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Customer extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false)
+    private LocalDate birthday;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false,length = 10,unique = true)
+    private String identityNo;
+
+    @Column()
+    private String mobile;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CustomerType customerType;
+
+    @Column(nullable = false)
+    private Integer status;
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/exception/GlobalExceptionHandler.java">
+package com.example.demo.exception;
+
+
+import com.example.demo.dto.response.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(value= AppException.class)
+    public ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception){
+        ErrorCode errorCode=exception.getErrorCode();
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(ApiResponse.error(exception.getErrorCode()));
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<?>> handlingValidationExceptions(MethodArgumentNotValidException exception) {
+
+        String message = exception.getFieldError().getDefaultMessage();
+        return ResponseEntity
+                .status(ErrorCode.INVALID_INPUT.getHttpStatus())
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT,message)
+        );
+    }
+    @ExceptionHandler(value = Exception.class)
+    public  ResponseEntity<ApiResponse<?>> handlingException(Exception exception){
+        exception.printStackTrace();
+        return ResponseEntity
+                .status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
+                .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR)
+        );
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/dto/request/CustomerCreateRequest.java">
+package com.example.demo.dto.request;
+
+import com.example.demo.entity.CustomerType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CustomerCreateRequest {
+
+    @NotBlank(message = "Ten khong de trong")
+    @Size(max=100,message = "Ten khong duoc qua dai")
+    private String name;
+
+    @NotNull
+    private LocalDate birthday;
+
+    @NotBlank(message = "Dia chi khong duoc trong")
+    private String address;
+
+    @NotBlank(message = "CCCD khong bo trong")
+    @Pattern(regexp = "\\d{10}",message = "CCCD phai 10 so")
+    private String identityNo;
+
+    @Pattern(regexp = "\\d{9,10}", message = "SDT phai du 9-10 chu so")
+    private String mobile;
+
+    @NotNull(message = "Kieu Khach hang khong duoc bo trong")
+    private CustomerType customerType;
+
+    @NotNull(message = "Trang thai khach hang khong duoc bo trong")
+    private Integer status;
+}
+</file>
+
+<file path="src/main/java/com/example/demo/repository/CustomerRepository.java">
+package com.example.demo.repository;
+
+import com.example.demo.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+
+public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
+    boolean existsByIdentityNo(String identityNo);
+    @Query("Select c From Customer c Order by c.name ASC")
+    Page<Customer> findAllSortedByName(Pageable pageable);
+
+    Page<Customer> findAll(Specification<Customer> spec, Pageable pageable);
+
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/impl/CustomerServiceImpl.java">
+package com.example.demo.service.impl;
+
+import com.example.demo.dto.request.CustomerCreateRequest;
+import com.example.demo.dto.request.CustomerSearchRequest;
+import com.example.demo.dto.request.CustomerUpdateRequest;
+import com.example.demo.dto.response.CustomerResponse;
+import com.example.demo.dto.response.PageResponse;
+import com.example.demo.entity.Customer;
+import com.example.demo.exception.AppException;
+import com.example.demo.exception.ErrorCode;
+import com.example.demo.mapper.CustomerMapping;
+import com.example.demo.repository.AccountRepository;
+import com.example.demo.repository.CustomerRepository;
+import com.example.demo.service.CustomerService;
+import com.example.demo.specification.CustomerSpecification;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomerServiceImpl implements CustomerService {
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private CustomerMapping customerMapping;
+
+    // create new customer
+    @Override
+    public CustomerResponse createCustomer(CustomerCreateRequest request){
+        if(customerRepository.existsByIdentityNo(request.getIdentityNo()))
+            throw new AppException(ErrorCode.CUSTOMER_EXISTED);
+
+        Customer customer= customerMapping.toEntity(request);
+        customerRepository.save(customer);
+
+        return customerMapping.toResponse(customer);
+    }
+
+    // Search all customer
+//    @Override
+//    public List<CustomerResponse> getCustomer(){
+//        List<Customer> customers =customerRepository.findAll();
+//        List<CustomerResponse> responses=new ArrayList<>();
+//        for(Customer customer: customers){
+//            responses.add(customerMapping.toResponse(customer));
+//        }
+//        return responses;
+//    }
+
+    //Search customer by id
+    @Override
+    public CustomerResponse getCustomerById(Long id){
+        Customer customer=customerRepository.findById(id)
+                .orElseThrow(()-> new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
+
+        return customerMapping.toResponse(customer);
+    }
+
+    //update customer by id
+    @Override
+    public CustomerResponse updateCustomerById(Long id, CustomerUpdateRequest request){
+        Customer customer=customerRepository.findById(id)
+                .orElseThrow(()-> new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
+        customerMapping.toUpdateCustomerByID(customer,request);
+        customerRepository.save(customer);
+        return customerMapping.toResponse(customer);
+
+    }
+
+    // delete customer by id
+    @Override
+    public void deleteCustomerById(Long id){
+        Customer customer=customerRepository.findById(id)
+                .orElseThrow(()->new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
+        if(accountRepository.existsByCustomerIdAndStatus(id,1)){
+            throw new AppException(ErrorCode.CUSTOMER_HAS_ACCOUNT);
+        }
+        customer.setStatus(0);
+        customerRepository.save(customer);
+    }
+
+    //Search customer sort by name use Pageable
+    @Override
+    public PageResponse<CustomerResponse> getAllCustomerSortByName(int page, int size){
+        Pageable pageable= PageRequest.of(page,size);
+        Page<Customer> customers=customerRepository.findAllSortedByName(pageable);
+        return PageResponse.from(customers.map(customerMapping::toResponse));
+    }
+
+    //Search customer sort by field use Pageable
+    @Override
+    public PageResponse<CustomerResponse> getCustomerSortByField(CustomerSearchRequest request, int page, int size){
+        Pageable pageable=PageRequest.of(page,size,Sort.by("name").ascending());
+        Page<Customer> customers=customerRepository.findAll(CustomerSpecification.filter(request),pageable);
+        return PageResponse.from(customers.map(customerMapping::toResponse));
+    }
+
+
+}
+</file>
+
+<file path="src/main/java/com/example/demo/service/CustomerService.java">
+package com.example.demo.service;
+
+import com.example.demo.dto.request.CustomerCreateRequest;
+import com.example.demo.dto.request.CustomerSearchRequest;
+import com.example.demo.dto.request.CustomerUpdateRequest;
+import com.example.demo.dto.response.CustomerResponse;
+import com.example.demo.dto.response.PageResponse;
+
+import java.util.List;
+
+public interface CustomerService {
+    CustomerResponse createCustomer(CustomerCreateRequest request);
+//    List<CustomerResponse> getCustomer();
+    CustomerResponse getCustomerById(Long id);
+    CustomerResponse updateCustomerById(Long id, CustomerUpdateRequest request);
+    void deleteCustomerById(Long id);
+    PageResponse<CustomerResponse> getAllCustomerSortByName(int page, int size);
+    PageResponse<CustomerResponse> getCustomerSortByField(CustomerSearchRequest request, int page, int size);
+}
+</file>
+
+<file path="src/main/java/com/example/demo/controller/CustomerController.java">
+package com.example.demo.controller;
+
+import com.example.demo.dto.request.CustomerCreateRequest;
+import com.example.demo.dto.request.CustomerSearchRequest;
+import com.example.demo.dto.request.CustomerUpdateRequest;
+import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.CustomerResponse;
+import com.example.demo.dto.response.PageResponse;
+import com.example.demo.service.CustomerService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/customers")
+
+public class CustomerController {
+    @Autowired
+    private CustomerService customerService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<CustomerResponse>> createCustomer(@Valid  @RequestBody CustomerCreateRequest request){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success(customerService.createCustomer(request)));
+    }
+
+//    @GetMapping
+//    public ApiResponse<List<CustomerResponse>> getCustomer(){
+//        return ApiResponse.success(customerService.getCustomer());
+//    }
+    @GetMapping("/{id}")
+    public ApiResponse<CustomerResponse> getCustomerById(@PathVariable Long id){
+        return ApiResponse.success(customerService.getCustomerById(id));
+    }
+    @PutMapping("/{id}")
+    public  ApiResponse<CustomerResponse> updateCustomerById(@PathVariable Long id,@Valid @RequestBody CustomerUpdateRequest request){
+        return ApiResponse.success(customerService.updateCustomerById(id,request));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteCustomerById(@PathVariable Long id){
+        customerService.deleteCustomerById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping()
+    public ApiResponse<PageResponse<CustomerResponse>> getAllCustomerSortByName(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.success(customerService.getAllCustomerSortByName(page, size));
+    }
+    @GetMapping("/by-field")
+    public  ApiResponse<PageResponse<CustomerResponse>> getCustomerSortByField(
+            @ModelAttribute CustomerSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            ){
+        return ApiResponse.success(customerService.getCustomerSortByField(request,page,size));
+    }
+}
+</file>
+
+<file path="src/main/java/com/example/demo/exception/ErrorCode.java">
+package com.example.demo.exception;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+public enum ErrorCode {
+    SUCCESS(1000, "Success", HttpStatus.OK),
+
+    INVALID_INPUT(1001, "Du lieu khong hop le", HttpStatus.BAD_REQUEST),
+
+    CUSTOMER_EXISTED(2001, "Khach hang da ton tai", HttpStatus.BAD_REQUEST),
+    CUSTOMER_NOT_FOUND(2002, "Khach hang khong ton tai", HttpStatus.NOT_FOUND),
+    CUSTOMER_HAS_ACCOUNT(2003, "Khach hang con tai khoan dang hoat dong, khong the xoa", HttpStatus.BAD_REQUEST),
+
+    ACCOUNT_NOT_FOUND(3001, "Tai khoan khong ton tai", HttpStatus.NOT_FOUND),
+    ACCOUNT_NUMBER_EXISTED(3002, "So tai khoan da ton tai", HttpStatus.CONFLICT),
+    ACCOUNT_NOT_PENDING_APPROVAL(3003, "Tai khoan khong o trang thai cho phe duyet", HttpStatus.BAD_REQUEST),
+    INVALID_ACCOUNT_STATUS(3004, "Trang thai tai khoan khong hop le", HttpStatus.BAD_REQUEST),
+
+    INTERNAL_SERVER_ERROR(9999, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    USER_EXISTED(4001,"tai khoan dang nhap da ton tai",HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(4002,"tai khoan khong ton tai",HttpStatus.BAD_REQUEST),
+
+    UNAUTHENTICATED(5001,"dang nhap khong thanh conh",HttpStatus.BAD_REQUEST);
+
+    private final int code;
+    private final String message;
+    private final HttpStatus httpStatus;
+
+    ErrorCode(int code, String message, HttpStatus httpStatus) {
+        this.code = code;
+        this.message = message;
+        this.httpStatus = httpStatus;
+    }
+}
+</file>
+
+<file path="pom.xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.15</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.example</groupId>
+	<artifactId>demo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>demo</name>
+	<description>Bank Project</description>
+
+	<properties>
+		<java.version>21</java.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<lombok.version>1.18.30</lombok.version>
+	</properties>
+
+	<dependencies>
+
+		<!-- WEB -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- LOMBOK -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.34</version>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- MAPSTRUCT -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<!-- TEST -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>10.5</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- SPRING BOOT -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- COMPILER (MAPSTRUCT + LOMBOK FIX) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+
+				<configuration>
+					<source>21</source>
+					<target>21</target>
+
+					<annotationProcessorPaths>
+
+						<!-- LOMBOK -->
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.34</version>
+						</path>
+
+						<!-- MAPSTRUCT -->
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+
+					</annotationProcessorPaths>
+
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
+</file>
+
+</files>
