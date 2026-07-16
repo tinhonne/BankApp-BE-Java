@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.UserCreateRequest;
-import com.example.demo.dto.response.UserCreateResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -22,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapping userMapping;
 
     @Override
-    public  UserCreateResponse createUser(UserCreateRequest request){
+    public UserResponse createUser(UserCreateRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -31,5 +33,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapping.toResponse(userRepository.save(user));
+    }
+
+    @Override
+    public List<UserResponse> findUser() {
+        List<User> users=userRepository.findAll();
+        return userMapping.toUserlist(users);
     }
 }

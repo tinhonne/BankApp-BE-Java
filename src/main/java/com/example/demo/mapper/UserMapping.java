@@ -1,10 +1,12 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.request.UserCreateRequest;
-import com.example.demo.dto.response.UserCreateResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel="spring")
 public interface UserMapping {
@@ -12,6 +14,6 @@ public interface UserMapping {
     @Mapping(target = "password", ignore = true)
     User toEntity(UserCreateRequest request);
 
-    UserCreateResponse toResponse(User user);
-
+    UserResponse toResponse(User user);
+    List<UserResponse> toUserlist(List<User> user);
 }
