@@ -13,7 +13,7 @@ import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.service.CustomerService;
 import com.example.demo.specification.CustomerSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,15 +21,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private CustomerMapping customerMapping;
+    private final CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
+    private final CustomerMapping customerMapping;
 
     // create new customer
     @Override
@@ -43,16 +40,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapping.toResponse(customer);
     }
 
-    // Search all customer
-//    @Override
-//    public List<CustomerResponse> getCustomer(){
-//        List<Customer> customers =customerRepository.findAll();
-//        List<CustomerResponse> responses=new ArrayList<>();
-//        for(Customer customer: customers){
-//            responses.add(customerMapping.toResponse(customer));
-//        }
-//        return responses;
-//    }
 
     //Search customer by id
     @Override

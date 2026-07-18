@@ -8,6 +8,7 @@ import com.example.demo.dto.response.CustomerResponse;
 import com.example.demo.dto.response.PageResponse;
 import com.example.demo.service.CustomerService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/customers")
-
+@RequiredArgsConstructor
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
+
+    private final CustomerService customerService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CustomerResponse>> createCustomer(@Valid  @RequestBody CustomerCreateRequest request){
@@ -29,10 +30,7 @@ public class CustomerController {
                 .body(ApiResponse.success(customerService.createCustomer(request)));
     }
 
-//    @GetMapping
-//    public ApiResponse<List<CustomerResponse>> getCustomer(){
-//        return ApiResponse.success(customerService.getCustomer());
-//    }
+
     @GetMapping("/{id}")
     public ApiResponse<CustomerResponse> getCustomerById(@PathVariable Long id){
         return ApiResponse.success(customerService.getCustomerById(id));

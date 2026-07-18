@@ -11,27 +11,24 @@ import com.example.demo.mapper.AccountMapping;
 import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+
 
 @Service
+@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-    @Autowired
-    private AccountRepository accountRepository;
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
+    private final CustomerRepository customerRepository;
+    private final AccountMapping accountMapping;
 
-    @Autowired
-    private AccountMapping accountMapping;
 
-// create new account by customerId
 
     @Override
     public AccountResponse createAccount(AccountRequest accountRequest) {

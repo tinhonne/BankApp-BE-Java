@@ -15,5 +15,5 @@ public interface UserMapping {
     User toEntity(UserCreateRequest request);
 
     UserResponse toResponse(User user);
-    List<UserResponse> toUserlist(List<User> user);
+    List<UserResponse> toUserResponselist(List<User> users);
 }

@@ -19,7 +19,6 @@ import java.text.ParseException;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
-
     private final AuthenticationService authenticationService;
 
     @PostMapping("/token")
