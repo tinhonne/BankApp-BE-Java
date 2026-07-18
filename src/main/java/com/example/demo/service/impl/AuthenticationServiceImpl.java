@@ -14,12 +14,11 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -32,8 +31,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
 
-    @NonFinal
-    protected static final String SIGNER_KEY ="ffb8c01517a9aeefe2224e8f51fc0ac9edafb00cada04f4ca8afc784e3d49f84";
+    @Value("${jwt.signer-key}")
+    private String signerKey;
 
     @Override
     public AuthenticationResponse authentication(AuthenticationRequest request){
@@ -71,7 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JWSObject jwsObject=new JWSObject(jwsHeader,payload);
 
         try {
-            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            jwsObject.sign(new MACSigner(signerKey.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
             log.error("Cannot create Token",e);
@@ -83,7 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throws JOSEException, ParseException {
         var token=request.getToken();
 
-        JWSVerifier verifier=new MACVerifier(SIGNER_KEY.getBytes());
+        JWSVerifier verifier=new MACVerifier(signerKey.getBytes());
 
         SignedJWT signedJWT=SignedJWT.parse(token);
         Date expiryTime=signedJWT.getJWTClaimsSet().getExpirationTime();
