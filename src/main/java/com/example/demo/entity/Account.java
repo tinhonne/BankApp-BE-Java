@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -23,9 +24,9 @@ public class Account extends BaseEntity {
     @JoinColumn(name="customer_id",nullable = false)
     private Customer customer;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     @PositiveOrZero
-    private Double balance;
+    private BigDecimal balance;
 
     @Column(nullable = false)
     private Integer status;

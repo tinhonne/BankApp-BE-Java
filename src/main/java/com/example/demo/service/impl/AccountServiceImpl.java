@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 
 
 @Service
@@ -41,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
         Account account=accountMapping.toEntity(accountRequest);
         account.setCustomer(customer);
         account.setStatus(3);
-        account.setBalance(account.getBalance() !=null ? account.getBalance():0.0);
+        account.setBalance(account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO);
         accountRepository.save(account);
         return accountMapping.toResponse(account);
     }

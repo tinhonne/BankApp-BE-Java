@@ -23,7 +23,16 @@ public enum ErrorCode {
     USER_EXISTED(4001,"tai khoan dang nhap da ton tai",HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(4002,"tai khoan khong ton tai",HttpStatus.BAD_REQUEST),
 
-    UNAUTHENTICATED(5001,"dang nhap khong thanh conh",HttpStatus.BAD_REQUEST);
+    UNAUTHENTICATED(5001,"dang nhap khong thanh conh",HttpStatus.BAD_REQUEST),
+
+    SOURCE_ACCOUNT_NOT_FOUND(6001, "Tai khoan nguon khong ton tai", HttpStatus.NOT_FOUND),
+    SOURCE_ACCOUNT_INACTIVE(6002, "Tai khoan nguon khong hoat dong", HttpStatus.BAD_REQUEST),
+    DESTINATION_ACCOUNT_NOT_FOUND(6003, "Tai khoan dich khong ton tai", HttpStatus.NOT_FOUND),
+    DESTINATION_ACCOUNT_INACTIVE(6004, "Tai khoan dich khong hoat dong", HttpStatus.BAD_REQUEST),
+    SAME_ACCOUNT_TRANSFER(6005, "Tai khoan nguon va dich phai khac nhau", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSFER_AMOUNT(6006, "So tien chuyen toi thieu la 0.01", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSACTION_DATE_RANGE(6007, "Khoang thoi gian giao dich khong hop le", HttpStatus.BAD_REQUEST),
+    INVALID_PAGE_REQUEST(6008, "Thong tin phan trang khong hop le", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;

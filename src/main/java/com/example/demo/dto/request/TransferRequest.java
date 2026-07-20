@@ -1,9 +1,8 @@
 package com.example.demo.dto.request;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,16 +14,13 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountRequest {
-
+public class TransferRequest {
     @NotBlank
-    @Pattern(regexp = "\\d{13}")
-    private String accountNumber;
-
+    private String fromAccountNumber;
+    @NotBlank
+    private String toAccountNumber;
     @NotNull
-    private Long customerId;
-
-    @NotNull
-    @PositiveOrZero
-    private BigDecimal balance;
+    @DecimalMin("1000")
+    private BigDecimal amount;
+    private String content;
 }

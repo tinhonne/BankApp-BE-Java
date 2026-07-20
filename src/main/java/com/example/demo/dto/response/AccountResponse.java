@@ -1,23 +1,25 @@
 package com.example.demo.dto.response;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class AccountResponse {
 
     private Long id;
     private Long customerId;
     private String customerName;
     private String accountNumber;
-    private Double balance;
+    private BigDecimal balance;
     private Integer status;
-
     private LocalDateTime createDatetime;
     private LocalDateTime updateDatetime;
 }
