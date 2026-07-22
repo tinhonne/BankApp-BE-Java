@@ -35,22 +35,23 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     public TransactionResponse transfer(TransferRequest request) {
         validateAmount(request);
-        Account source = requireAccount(request.getFromAccountNumber(), ErrorCode.SOURCE_ACCOUNT_NOT_FOUND);
-        requireActive(source, ErrorCode.SOURCE_ACCOUNT_INACTIVE);
-        Account destination = requireAccount(request.getToAccountNumber(), ErrorCode.DESTINATION_ACCOUNT_NOT_FOUND);
-        requireActive(destination, ErrorCode.DESTINATION_ACCOUNT_INACTIVE);
-        if (request.getFromAccountNumber().equals(request.getToAccountNumber())) {
+        String sourceNumber = request.getFromAccountNumber();
+        String destinationNumber = request.getToAccountNumber();
+        if (sourceNumber.equals(destinationNumber)) {
             throw new AppException(ErrorCode.SAME_ACCOUNT_TRANSFER);
         }
 
-        String firstNumber = source.getAccountNumber().compareTo(destination.getAccountNumber()) < 0
-                ? source.getAccountNumber() : destination.getAccountNumber();
-        String secondNumber = firstNumber.equals(source.getAccountNumber())
-                ? destination.getAccountNumber() : source.getAccountNumber();
-        Account first = lockAccount(firstNumber);
-        Account second = lockAccount(secondNumber);
-        source = first.getAccountNumber().equals(request.getFromAccountNumber()) ? first : second;
-        destination = first.getAccountNumber().equals(request.getToAccountNumber()) ? first : second;
+        boolean sourceFirst = sourceNumber.compareTo(destinationNumber) < 0;
+        String firstNumber = sourceFirst ? sourceNumber : destinationNumber;
+        String secondNumber = sourceFirst ? destinationNumber : sourceNumber;
+        ErrorCode firstNotFound = sourceFirst
+                ? ErrorCode.SOURCE_ACCOUNT_NOT_FOUND : ErrorCode.DESTINATION_ACCOUNT_NOT_FOUND;
+        ErrorCode secondNotFound = sourceFirst
+                ? ErrorCode.DESTINATION_ACCOUNT_NOT_FOUND : ErrorCode.SOURCE_ACCOUNT_NOT_FOUND;
+        Account first = lockAccount(firstNumber, firstNotFound);
+        Account second = lockAccount(secondNumber, secondNotFound);
+        Account source = sourceFirst ? first : second;
+        Account destination = sourceFirst ? second : first;
         requireActive(source, ErrorCode.SOURCE_ACCOUNT_INACTIVE);
         requireActive(destination, ErrorCode.DESTINATION_ACCOUNT_INACTIVE);
 
@@ -102,17 +103,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private Account requireAccount(String accountNumber, ErrorCode errorCode) {
-        Account account = accountRepository.findByAccountNumber(accountNumber);
-        if (account == null) {
-            throw new AppException(errorCode);
-        }
-        return account;
-    }
-
-    private Account lockAccount(String accountNumber) {
+    private Account lockAccount(String accountNumber, ErrorCode errorCode) {
         return accountRepository.findByAccountNumberForUpdate(accountNumber)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(errorCode));
     }
 
     private void requireActive(Account account, ErrorCode errorCode) {

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,72 +56,88 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    void nonexistentSourceDoesNotValidateDestinationOrCreateTransaction() {
-        when(accountRepository.findByAccountNumber("1")).thenReturn(null);
+    void missingSourceMapsErrorWhenSourceSortsFirst() {
+        when(accountRepository.findByAccountNumberForUpdate("1")).thenReturn(Optional.empty());
 
-        assertError(ErrorCode.SOURCE_ACCOUNT_NOT_FOUND, () -> service.transfer(request("1", "2", "10.00")));
+        assertError(ErrorCode.SOURCE_ACCOUNT_NOT_FOUND, () -> service.transfer(request("1", "2", "1000.00")));
 
-        verify(accountRepository, never()).findByAccountNumber("2");
+        verify(accountRepository).findByAccountNumberForUpdate("1");
+        verify(accountRepository, never()).findByAccountNumberForUpdate("2");
         verifyNoInteractions(transactionRepository);
     }
 
     @Test
-    void inactiveSourceDoesNotValidateDestinationOrCreateTransaction() {
-        when(accountRepository.findByAccountNumber("1")).thenReturn(account("1", "20.00", 0));
+    void missingSourceMapsErrorWhenSourceSortsSecond() {
+        when(accountRepository.findByAccountNumberForUpdate("1"))
+                .thenReturn(Optional.of(account("1", "2000.00", 1)));
+        when(accountRepository.findByAccountNumberForUpdate("2")).thenReturn(Optional.empty());
 
-        assertError(ErrorCode.SOURCE_ACCOUNT_INACTIVE, () -> service.transfer(request("1", "2", "10.00")));
+        assertError(ErrorCode.SOURCE_ACCOUNT_NOT_FOUND, () -> service.transfer(request("2", "1", "1000.00")));
 
-        verify(accountRepository, never()).findByAccountNumber("2");
+        InOrder order = inOrder(accountRepository);
+        order.verify(accountRepository).findByAccountNumberForUpdate("1");
+        order.verify(accountRepository).findByAccountNumberForUpdate("2");
         verifyNoInteractions(transactionRepository);
     }
 
     @Test
-    void nonexistentDestinationDoesNotCreateTransaction() {
-        when(accountRepository.findByAccountNumber("1")).thenReturn(account("1", "20.00", 1));
-        when(accountRepository.findByAccountNumber("2")).thenReturn(null);
+    void missingDestinationMapsErrorWhenDestinationSortsFirst() {
+        when(accountRepository.findByAccountNumberForUpdate("1")).thenReturn(Optional.empty());
 
-        assertError(ErrorCode.DESTINATION_ACCOUNT_NOT_FOUND, () -> service.transfer(request("1", "2", "10.00")));
+        assertError(ErrorCode.DESTINATION_ACCOUNT_NOT_FOUND,
+                () -> service.transfer(request("2", "1", "1000.00")));
+
+        verify(accountRepository).findByAccountNumberForUpdate("1");
+        verify(accountRepository, never()).findByAccountNumberForUpdate("2");
+        verifyNoInteractions(transactionRepository);
+    }
+
+    @Test
+    void inactiveSourceIsCheckedOnLockedValue() {
+        when(accountRepository.findByAccountNumberForUpdate("1"))
+                .thenReturn(Optional.of(account("1", "2000.00", 0)));
+        when(accountRepository.findByAccountNumberForUpdate("2"))
+                .thenReturn(Optional.of(account("2", "700.00", 1)));
+
+        assertError(ErrorCode.SOURCE_ACCOUNT_INACTIVE, () -> service.transfer(request("1", "2", "1000.00")));
 
         verifyNoInteractions(transactionRepository);
     }
 
     @Test
-    void inactiveDestinationDoesNotCreateTransaction() {
-        when(accountRepository.findByAccountNumber("1")).thenReturn(account("1", "20.00", 1));
-        when(accountRepository.findByAccountNumber("2")).thenReturn(account("2", "7.00", 0));
+    void inactiveDestinationIsCheckedOnLockedValue() {
+        when(accountRepository.findByAccountNumberForUpdate("1"))
+                .thenReturn(Optional.of(account("1", "2000.00", 1)));
+        when(accountRepository.findByAccountNumberForUpdate("2"))
+                .thenReturn(Optional.of(account("2", "700.00", 0)));
 
-        assertError(ErrorCode.DESTINATION_ACCOUNT_INACTIVE, () -> service.transfer(request("1", "2", "10.00")));
+        assertError(ErrorCode.DESTINATION_ACCOUNT_INACTIVE,
+                () -> service.transfer(request("1", "2", "1000.00")));
 
-        verify(accountRepository, never()).findByAccountNumberForUpdate(any());
         verifyNoInteractions(transactionRepository);
     }
 
     @Test
-    void sameAccountIsRejectedOnlyAfterBothValidationSteps() {
-        Account account = account("1", "20.00", 1);
-        when(accountRepository.findByAccountNumber("1")).thenReturn(account);
+    void sameAccountFailsWithoutRepositoryQuery() {
+        assertError(ErrorCode.SAME_ACCOUNT_TRANSFER, () -> service.transfer(request("1", "1", "1000.00")));
 
-        assertError(ErrorCode.SAME_ACCOUNT_TRANSFER, () -> service.transfer(request("1", "1", "10.00")));
-
-        verify(accountRepository, times(2)).findByAccountNumber("1");
-        verify(accountRepository, never()).findByAccountNumberForUpdate(any());
-        verifyNoInteractions(transactionRepository);
+        verifyNoInteractions(accountRepository, transactionRepository, transactionMapping);
     }
 
     @Test
     void insufficientBalanceSavesFailedTransactionWithoutSavingBalances() {
-        Account source = account("1", "5.00", 1);
-        Account destination = account("2", "7.00", 1);
+        Account source = account("1", "500.00", 1);
+        Account destination = account("2", "700.00", 1);
         TransactionResponse expected = new TransactionResponse();
-        mockLookupAndLocks(source, destination);
+        mockLocks(source, destination);
         when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(transactionMapping.toResponse(any())).thenReturn(expected);
 
-        TransactionResponse actual = service.transfer(request("1", "2", "10.00"));
+        TransactionResponse actual = service.transfer(request("1", "2", "1000.00"));
 
         assertSame(expected, actual);
-        assertEquals(new BigDecimal("5.00"), source.getBalance());
-        assertEquals(new BigDecimal("7.00"), destination.getBalance());
+        assertEquals(new BigDecimal("500.00"), source.getBalance());
+        assertEquals(new BigDecimal("700.00"), destination.getBalance());
         verify(transactionRepository).save(org.mockito.ArgumentMatchers.argThat(transaction ->
                 transaction.getStatus() == TransactionStatus.INSUFFICIENT_BALANCE
                         && "Insufficient balance".equals(transaction.getErrorReason())));
@@ -127,19 +145,22 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    void successfulTransferUpdatesBothBalancesAndReturnsMappedTransaction() {
-        Account source = account("1", "20.00", 1);
-        Account destination = account("2", "7.00", 1);
+    void successfulTransferLocksEachAccountOnceInAscendingOrderAndUpdatesBalances() {
+        Account source = account("2", "2000.00", 1);
+        Account destination = account("1", "700.00", 1);
         TransactionResponse expected = new TransactionResponse();
-        mockLookupAndLocks(source, destination);
+        mockLocks(source, destination);
         when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(transactionMapping.toResponse(any())).thenReturn(expected);
 
-        TransactionResponse actual = service.transfer(request("1", "2", "10.00"));
+        TransactionResponse actual = service.transfer(request("2", "1", "1000.00"));
 
         assertSame(expected, actual);
-        assertEquals(new BigDecimal("10.00"), source.getBalance());
-        assertEquals(new BigDecimal("17.00"), destination.getBalance());
+        assertEquals(new BigDecimal("1000.00"), source.getBalance());
+        assertEquals(new BigDecimal("1700.00"), destination.getBalance());
+        InOrder order = inOrder(accountRepository);
+        order.verify(accountRepository, times(1)).findByAccountNumberForUpdate("1");
+        order.verify(accountRepository, times(1)).findByAccountNumberForUpdate("2");
         verify(accountRepository).save(source);
         verify(accountRepository).save(destination);
         verify(transactionRepository).save(org.mockito.ArgumentMatchers.argThat(transaction ->
@@ -216,11 +237,10 @@ class TransactionServiceImplTest {
         assertEquals(expected, exception.getErrorCode());
     }
 
-    private void mockLookupAndLocks(Account source, Account destination) {
-        when(accountRepository.findByAccountNumber(source.getAccountNumber())).thenReturn(source);
-        when(accountRepository.findByAccountNumber(destination.getAccountNumber())).thenReturn(destination);
-        when(accountRepository.findByAccountNumberForUpdate("1")).thenReturn(Optional.of(source));
-        when(accountRepository.findByAccountNumberForUpdate("2")).thenReturn(Optional.of(destination));
+    private void mockLocks(Account source, Account destination) {
+        when(accountRepository.findByAccountNumberForUpdate(source.getAccountNumber())).thenReturn(Optional.of(source));
+        when(accountRepository.findByAccountNumberForUpdate(destination.getAccountNumber()))
+                .thenReturn(Optional.of(destination));
     }
 
     private Account account(String number, String balance, int status) {
