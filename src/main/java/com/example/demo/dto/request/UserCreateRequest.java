@@ -1,5 +1,6 @@
 package com.example.demo.dto.request;
 
+import com.example.demo.entity.RoleType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -27,7 +28,5 @@ public class UserCreateRequest {
     private String name;
 
     @NotNull(message = "Vui lòng chọn chức vụ")
-    @Min(value = 0, message = "Role không hợp lệ")
-    @Max(value = 1, message = "Role không hợp lệ")
-    private Integer role;
+    private RoleType role;
 }

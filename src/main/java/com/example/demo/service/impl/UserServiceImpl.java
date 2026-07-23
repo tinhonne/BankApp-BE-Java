@@ -23,13 +23,14 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapping userMapping;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserResponse createUser(UserCreateRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user=userMapping.toEntity(request);
-        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapping.toResponse(userRepository.save(user));

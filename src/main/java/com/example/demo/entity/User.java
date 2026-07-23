@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
 
@@ -26,8 +27,8 @@ public class User extends BaseEntity {
     @Column(length = 20,nullable = false)
     String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    Integer role;
-
+    RoleType role;
 
 }
